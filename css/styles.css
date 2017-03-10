@@ -31,3 +31,7 @@ ul {
   overflow: scroll;
   background-color: #1c262f;
 }
+
+img {
+  height: 50px;
+}

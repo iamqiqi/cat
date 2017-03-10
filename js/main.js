@@ -1,5 +1,7 @@
 $(document).ready(function() {
-  var cats = [
+  var model = {
+    currentCat: null,
+    cats: [
       {
         clickCount : 0,
         name : 'cat1',
@@ -18,27 +20,53 @@ $(document).ready(function() {
         imgSrc : 'images/cat3.jpg',
         imgAttribution : 'https://www.example.com/inugbyugjo'
       }
-    ];
+    ]
+  };
 
-  for (let i=0; i < cats.length; i++) {
-    let catName = $('<li>').attr('id', 'cat-'+i).text(cats[i].name).appendTo($('.menu'));
+  var controller = {
+    init: function() {
+      view.render();
+      // do render
+    },
+    catNameClick: function(catNum) {
+      model.currentCat = model.cats[catNum];
+      view.render();
+    },
+    catImgClick: function(currentCat) {
+      currentCat.clickCount++;
+      view.render();
+    }
+  };
 
-    catName.on('click', function() {
+  var view = {
+    render: function() {
+      $('.menu').html("");
       $('.content').html("");
-      let catWrapper = $('<div>').attr('class', 'cat-wrapper').appendTo($('.content'));
-      let catTitle = $('<h3>').attr('class', 'title').text(cats[i].name).appendTo(catWrapper);
-      let catImg = $('<img>').attr({
-        src: cats[i].imgSrc,
-        class: 'image-responsive',
-        alt: cats[i].imgAttribution
-      }).appendTo(catWrapper);
-      let countDiv = $('<div>').appendTo(catWrapper);
-      $('<h4>').text('count: ').appendTo(countDiv);
-      let countValueTag = $('<h4>').text(cats[i].clickCount).appendTo(countDiv);
-      catImg.on('click', function() {
-        cats[i].clickCount++;
-        countValueTag.text(cats[i].clickCount);
-      });
-    });
-  }
+
+      for (let i=0; i < model.cats.length; i++) {
+        let $catName = $('<li>').attr('id', 'cat-'+i).text(model.cats[i].name).appendTo($('.menu'));
+        $catName.on('click', function() {
+          controller.catNameClick(i);
+        });
+      }
+
+      if (model.currentCat) {
+        let $catWrapper = $('<div>').attr('class', 'cat-wrapper').appendTo($('.content'));
+        let $catTitle = $('<h3>').attr('class', 'title').text(model.currentCat.name).appendTo($catWrapper);
+        let $catImg = $('<img>').attr({
+          src: model.currentCat.imgSrc,
+          class: 'image-responsive',
+          alt: model.currentCat.imgAttribution
+        }).appendTo($catWrapper);
+        let $countDiv = $('<div>').appendTo($catWrapper);
+        $('<h4>').text('count: ').appendTo($countDiv);
+        let $countValueTag = $('<h4>').text(model.currentCat.clickCount).appendTo($countDiv);
+        $catImg.on('click', function() {
+          controller.catImgClick(model.currentCat);
+        });
+      }
+    }
+  };
+
+  controller.init();
 });
