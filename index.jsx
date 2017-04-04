@@ -16,17 +16,14 @@ const store = configureStore();
 
 store.subscribe(() => {
   const state = store.getState();
-  console.log(state);
   if (state && state.catListData) {
     localStorage.catListData = JSON.stringify(state.catListData);
   }
 });
 
 if (localStorage.catListData) {
-  console.log('loading saved data');
   store.dispatch(updateCatListData(JSON.parse(localStorage.catListData)));
 } else {
-  console.log('loading default data');
   store.dispatch(updateCatListData(InitCatListData));
 }
 

@@ -11,6 +11,7 @@ class App extends Component {
     return (
       <div>
         <CatMenu />
+        <CatContent />
         { __DEVTOOLS__ && typeof window.devToolsExtension === 'undefined' && <DevTools />}
       </div>
     );

@@ -1,44 +1,112 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { updateCatListData } from '../actions/actions';
+import { updateCat, setAdminFilter } from '../actions/actions';
+import { ADMIN_EDITING_VISIBILITY } from '../actions/ActionTypes';
+
+const { SHOW_ADMIN, SHOW_EDITING } = ADMIN_EDITING_VISIBILITY;
+let nameInput;
+let srcInput;
+let attrInput;
 
 class CatContent extends Component {
-  incriseaClickHandler(currentCat, catIndex) {
-    currentCat.clickCount++;
-    catListData[catIndex] = currentCat;
+  incriseaClickHandler(catListData, catIndex) {
+    let clickCount = catListData[catIndex].clickCount;
+    clickCount += 1;
+    let fieldsToUpdate = { clickCount };
+    this.props.updateCat(catIndex, fieldsToUpdate);
+  }
+
+  saveCatHandler(catData, catIndex) {
+    let fieldsToUpdate = {};
+    if (catData.name !== nameInput.value) {
+      fieldsToUpdate.name = nameInput.value;
+    }
+    if (catData.imgSrc !== srcInput.value) {
+      fieldsToUpdate.imgSrc = srcInput.value;
+    }
+    if (catData.imgAttribution !== attrInput.value) {
+      fieldsToUpdate.imgAttribution = attrInput.value;
+    }
+    if (fieldsToUpdate.length !== 0) {
+      this.props.updateCat(catIndex, fieldsToUpdate);
+    }
+  }
+
+  showEditingHandler() {
+    this.props.setAdminFilter(SHOW_EDITING);
+  }
+
+  cancelEditingHandler() {
+    this.props.setAdminFilter(SHOW_ADMIN);
   }
 
   render() {
-    console.log(this.props);
-    let { currentCat, catIndex, catListData } = this.props;
-
+    let { catIndex, catListData, adminEditingFilter } = this.props;
+    let currentCat = catListData[catIndex];
     return (
       <div className="content">
-        <h3 className="title">{ currentCat.name }</h3>
+        <h3 className="title">{ catListData[catIndex].name }</h3>
         <img
-          src={ currentCat.src }
+          src={ catListData[catIndex].imgSrc }
           className="image-responsive"
-          alt={ currentCat.imgAttribution }
+          alt={ catListData[catIndex].imgAttribution }
           onClick={ () => {
-            this.incriseaClickHandler(currentCat, catIndex);
-            updateCatListData(catListData);
+            this.incriseaClickHandler(catListData, catIndex);
           }}
         />
-        <h4>count: { currentCat.clickCount }</h4>
+        <h4>count: { catListData[catIndex].clickCount }</h4>
+        { adminEditingFilter === SHOW_ADMIN &&
+          <button onClick={ () => this.showEditingHandler() }>admin</button>
+        }
+        { adminEditingFilter === SHOW_EDITING &&
+          <div>
+            <form onSubmit={ () => this.saveCatHandler(currentCat, catIndex) }>
+              <label>
+                name:
+                <input
+                  name="name"
+                  defaultValue={ currentCat.name }
+                  ref={ input => { nameInput = input; } }
+                  onChange={ name => this.setState({ name }) }
+                />
+              </label>
+              <label>
+                image source:
+                <input
+                  name="imgSrc"
+                  defaultValue={ currentCat.imgSrc }
+                  ref={ input => { srcInput = input; } }
+                  onChange={ imgSrc => this.setState({ imgSrc }) }
+                />
+              </label>
+              <label>
+                image attr:
+                <input
+                  name="imgAttr"
+                  defaultValue={ currentCat.imgAttribution }
+                  ref={ input => { attrInput = input; } }
+                  onChange={ imgAttribution => this.setState({ imgAttribution }) }
+                />
+              </label><br />
+              <input type="submit" value="save" />
+            </form>
+            <button onClick={ () => this.cancelEditingHandler() }>cancel</button>
+          </div>
+        }
       </div>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  currentCat: state.currentCat,
   catIndex: state.catIndex,
-  catListData: state.cateListData,
+  catListData: state.catListData,
+  adminEditingFilter: state.adminEditingFilter,
 });
 
 const mapDispatchToProps = dispatch => (
-  bindActionCreators({ updateCatListData }, dispatch)
+  bindActionCreators({ updateCat, setAdminFilter }, dispatch)
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(CatContent);

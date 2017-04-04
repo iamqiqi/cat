@@ -16,7 +16,7 @@ class CatMenu extends Component {
           catListData.map((cat, index) => {
             return (
               <li
-                key={index}
+                key={ index }
                 onClick={ () => this.catNameClickHandler(cat, index) }
               >
                 { cat.name }

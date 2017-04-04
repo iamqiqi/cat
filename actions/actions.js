@@ -15,17 +15,16 @@ export function updateCat(catIndex, fieldsToUpdate) {
   };
 }
 
-
-export function setCurrentCat(currentCat) {
-  return {
-    type: types.SET_CURRENT_CAT,
-    currentCat,
-  };
-}
-
 export function setCatIndex(index) {
   return {
     type: types.SET_CAT_INDEX,
     index,
+  };
+}
+
+export function setAdminFilter(adminOrEditing) {
+  return {
+    type: types.SET_ADMIN_FILTER,
+    adminOrEditing,
   };
 }
