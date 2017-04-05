@@ -31,6 +31,7 @@ class CatContent extends Component {
     if (fieldsToUpdate.length !== 0) {
       this.props.updateCat(catIndex, fieldsToUpdate);
     }
+    this.props.setAdminFilter(SHOW_ADMIN);
   }
 
   showEditingHandler() {
@@ -61,7 +62,7 @@ class CatContent extends Component {
         }
         { adminEditingFilter === SHOW_EDITING &&
           <div>
-            <form onSubmit={ () => this.saveCatHandler(currentCat, catIndex) }>
+            <form onSubmit={ (e) => { e.preventDefault(); this.saveCatHandler(currentCat, catIndex); } }>
               <label>
                 name:
                 <input
